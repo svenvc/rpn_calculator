@@ -18,6 +18,7 @@ defmodule RPNCalculatorWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/calc", CalculatorLive.Calculator
   end
 
   # Other scopes may use custom stacks.
