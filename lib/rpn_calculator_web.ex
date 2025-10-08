@@ -84,6 +84,9 @@ defmodule RPNCalculatorWeb do
 
       # HTML escaping functionality
       import Phoenix.HTML
+
+      use Fluxon
+
       # Core UI components
       import RPNCalculatorWeb.CoreComponents
 
