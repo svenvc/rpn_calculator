@@ -44,6 +44,17 @@ const liveSocket = new LiveSocket("/live", Socket, {
   },
 })
 
+// handle js-do events from the server and execute JS code
+window.addEventListener("phx:js-do", (e) => {
+  let el = document.getElementById(e.detail.id)
+  if (el) {
+    js_do = el.getAttribute("data-js-do")
+    if (js_do) {
+      liveSocket.execJS(el, js_do)
+    }
+  }
+})
+
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
