@@ -1,6 +1,8 @@
 defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   use RPNCalculatorWeb, :live_view
 
+  alias RPNCalculator.RPNCalculator
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -21,7 +23,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
             1
           </div>
           <div class="mb-4 w-72 text-right font-mono text-2xl bg-input p-2 rounded-lg">
-            -3.14159
+            {render_main_display(@rpn_calculator)}
           </div>
         </div>
         <div id="keypad">
@@ -290,8 +292,24 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     """
   end
 
+  @impl true
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket, rpn_calculator: %RPNCalculator{})}
+  end
+
+  defp render_main_display(%RPNCalculator{} = rpn_calculator) do
+    case rpn_calculator.input_digits do
+      "" -> "0"
+      _ -> rpn_calculator.input_digits
+    end
+  end
+
   defp animate_click(button_id) do
-    JS.transition({"ease-out duration-300", "opacity-0", "opacity-100"}, time: 300, to: button_id)
+    JS.transition(
+      {"ease-out duration-300", "opacity-0", "opacity-100"},
+      time: 300,
+      to: button_id
+    )
   end
 
   @key_translations %{
@@ -308,16 +326,57 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     "d" => "Drop"
   }
 
+  @allowed_keys [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "Add",
+    "Subtract",
+    "Multiply",
+    "Divide",
+    "Dot",
+    "Sign",
+    "Enter",
+    "Clear",
+    "Backspace",
+    "XY",
+    "RollDown",
+    "RollUp",
+    "Drop"
+  ]
+
   @impl true
   def handle_event("calc-keyup", %{"key" => key}, socket) do
     IO.inspect(key, label: "keyup")
     translated_key = Map.get(@key_translations, key, key)
-    {:noreply, push_event(socket, "js-do", %{id: "button-#{translated_key}"})}
+
+    if translated_key in @allowed_keys do
+      {:noreply,
+       socket
+       |> process_key(translated_key)
+       |> push_event("js-do", %{id: "button-#{translated_key}"})}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
   def handle_event("calc-button", %{"key" => key}, socket) do
     IO.inspect(key, label: "button")
-    {:noreply, socket}
+    {:noreply, socket |> process_key(key)}
+  end
+
+  defp process_key(socket, key) when key in @allowed_keys do
+    IO.inspect(key, label: "processing")
+    rpn_calculator = socket.assigns.rpn_calculator |> RPNCalculator.process_key(key)
+    IO.inspect(rpn_calculator, label: "rpn_calculator")
+    assign(socket, :rpn_calculator, rpn_calculator)
   end
 end
