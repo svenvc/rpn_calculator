@@ -1,15 +1,14 @@
 defmodule RPNCalculator.RPNCalculator do
-  defstruct rpn_stack: [0], input_digits: ""
+  defstruct rpn_stack: [0], input_digits: "", computed?: false
 
   def process_key(%__MODULE__{} = rpn_calculator, key)
       when key in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"] do
-    # if rpn_calculator.input_digits == "" and rpn_calculator.rpn_stack != [0] do
-    #   rpn_calculator
-    #   |> Map.update!(:rpn_stack, fn [top | tail] -> [0 | [top | tail]] end)
-    # else
-    #   rpn_calculator
-    # end
-    rpn_calculator
+    if rpn_calculator.input_digits == "" and rpn_calculator.computed? do
+      rpn_calculator
+      |> Map.update!(:rpn_stack, fn [top | tail] -> [0 | [top | tail]] end)
+    else
+      rpn_calculator
+    end
     |> Map.update!(:input_digits, fn input_digits ->
       cond do
         input_digits == "0" -> key
@@ -47,7 +46,9 @@ defmodule RPNCalculator.RPNCalculator do
       end)
 
     if rpn_calculator.input_digits == "" do
-      rpn_calculator |> Map.update!(:rpn_stack, fn [x | tail] -> [-x | tail] end)
+      rpn_calculator
+      |> Map.update!(:rpn_stack, fn [x | tail] -> [-x | tail] end)
+      |> Map.replace!(:computed?, true)
     else
       rpn_calculator |> update_x()
     end
@@ -81,6 +82,7 @@ defmodule RPNCalculator.RPNCalculator do
     rpn_calculator
     |> Map.update!(:rpn_stack, fn [top | tail] -> [top | [top | tail]] end)
     |> clear_input()
+    |> Map.replace!(:computed?, false)
   end
 
   def process_key(%__MODULE__{} = rpn_calculator, "Add") do
@@ -169,11 +171,13 @@ defmodule RPNCalculator.RPNCalculator do
 
     rpn_calculator
     |> Map.update!(:rpn_stack, fn [_top | tail] -> [new_x | tail] end)
+    |> Map.replace!(:computed?, false)
   end
 
   defp clear_input(%__MODULE__{} = rpn_calculator) do
     rpn_calculator
     |> Map.update!(:input_digits, fn _ -> "" end)
+    |> Map.replace!(:computed?, true)
   end
 
   defp parse_input(""), do: 0
