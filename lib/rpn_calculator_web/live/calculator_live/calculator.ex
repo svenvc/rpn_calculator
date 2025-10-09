@@ -13,14 +13,14 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
       <div id="calculator" phx-window-keyup="calc-keyup" class="grid place-content-center">
         <div id="display">
-          <div class="mb-1 w-72 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
-            3
+          <div class="mb-1 w-72 min-h-12 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
+            {render_stack_at(@rpn_calculator, 3)}
           </div>
-          <div class="mb-1 w-72 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
-            2
+          <div class="mb-1 w-72 min-h-12 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
+            {render_stack_at(@rpn_calculator, 2)}
           </div>
-          <div class="mb-1 w-72 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
-            1
+          <div class="mb-1 w-72 min-h-12 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
+            {render_stack_at(@rpn_calculator, 1)}
           </div>
           <div class="mb-4 w-72 text-right font-mono text-2xl bg-input p-2 rounded-lg">
             {render_main_display(@rpn_calculator)}
@@ -299,15 +299,23 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   defp render_main_display(%RPNCalculator{} = rpn_calculator) do
     case rpn_calculator.input_digits do
-      "" -> "0"
+      "" -> rpn_calculator.rpn_stack |> List.first() |> to_string()
       _ -> rpn_calculator.input_digits
+    end
+  end
+
+  defp render_stack_at(%RPNCalculator{} = rpn_calculator, level) do
+    if Enum.count(rpn_calculator.rpn_stack) > level do
+      rpn_calculator.rpn_stack |> Enum.at(level) |> to_string()
+    else
+      ""
     end
   end
 
   defp animate_click(button_id) do
     JS.transition(
-      {"ease-out duration-300", "opacity-0", "opacity-100"},
-      time: 300,
+      {"ease-out duration-200", "opacity-0", "opacity-100"},
+      time: 200,
       to: button_id
     )
   end
