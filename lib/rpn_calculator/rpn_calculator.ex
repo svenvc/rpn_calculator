@@ -166,6 +166,11 @@ defmodule RPNCalculator.RPNCalculator do
     )
   end
 
+  def top_of_stack(%__MODULE__{} = rpn_calculator) do
+    [top_of_stack | _tail] = rpn_calculator.rpn_stack
+    top_of_stack
+  end
+
   defp update_x(%__MODULE__{} = rpn_calculator) do
     new_x = parse_input(rpn_calculator.input_digits)
 

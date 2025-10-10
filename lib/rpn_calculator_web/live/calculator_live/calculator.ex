@@ -299,7 +299,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   defp render_main_display(%RPNCalculator{} = rpn_calculator) do
     case rpn_calculator.input_digits do
-      "" -> rpn_calculator.rpn_stack |> List.first() |> to_string()
+      "" -> RPNCalculator.top_of_stack(rpn_calculator) |> to_string()
       _ -> rpn_calculator.input_digits
     end
   end
