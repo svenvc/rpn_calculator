@@ -7,288 +7,87 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <%!-- <.badge variant="solid" color="primary" size="xl" class="text-xl">
-        <.icon name="hero-calculator" class="icon" /> RPN Calculator
-      </.badge> --%>
-
       <div id="calculator" phx-window-keyup="calc-keyup" class="grid place-content-center">
-        <div id="display">
-          <div class="mb-1 w-72 min-h-12 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
-            {render_stack_at(@rpn_calculator, 3)}
-          </div>
-          <div class="mb-1 w-72 min-h-12 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
-            {render_stack_at(@rpn_calculator, 2)}
-          </div>
-          <div class="mb-1 w-72 min-h-12 text-right font-mono text-2xl bg-input p-2 rounded-lg text-foreground-softest">
-            {render_stack_at(@rpn_calculator, 1)}
-          </div>
-          <div class="mb-4 w-72 text-right font-mono text-2xl bg-input p-2 rounded-lg">
-            {render_main_display(@rpn_calculator)}
-          </div>
+        <div id="display" class="mb-3">
+          <.calc_display soft>{render_stack_at(@rpn_calculator, 3)}</.calc_display>
+          <.calc_display soft>{render_stack_at(@rpn_calculator, 2)}</.calc_display>
+          <.calc_display soft>{render_stack_at(@rpn_calculator, 1)}</.calc_display>
+          <.calc_display>{render_main_display(@rpn_calculator)}</.calc_display>
         </div>
         <div id="keypad">
           <div class="grid grid-cols-4 grid-rows-1 gap-4 justify-items-center w-72 font-bold mb-4">
-            <.button
-              id="button-XY"
-              variant="solid"
-              color="info"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="XY"
-              data-js-do={animate_click("#button-XY")}
-            >
+            <.calc_button key="XY" color="info">
               X <.icon name="hero-arrows-right-left" class="icon" />Y
-            </.button>
-            <.button
-              id="button-RollDown"
-              variant="solid"
-              color="info"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="RollDown"
-              data-js-do={animate_click("#button-RollDown")}
-            >
+            </.calc_button>
+            <.calc_button key="RollDown" color="info">
               R <.icon name="hero-arrow-down" class="icon" />
-            </.button>
-            <.button
-              id="button-RollUp"
-              variant="solid"
-              color="info"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="RollUp"
-              data-js-do={animate_click("#button-RollUp")}
-            >
+            </.calc_button>
+            <.calc_button key="RollUp" color="info">
               R <.icon name="hero-arrow-up" class="icon" />
-            </.button>
-            <.button
-              id="button-Drop"
-              variant="solid"
-              color="info"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="Drop"
-              data-js-do={animate_click("#button-Drop")}
-            >
-              DROP
-            </.button>
+            </.calc_button>
+            <.calc_button key="Drop" color="info">DROP</.calc_button>
           </div>
           <div class="grid grid-cols-3 grid-rows-1 gap-4 justify-items-center w-72 font-bold mb-4">
-            <.button
-              id="button-Enter"
-              variant="solid"
-              color="danger"
-              class="active:bg-accent w-22"
-              phx-click="calc-button"
-              phx-value-key="Enter"
-              data-js-do={animate_click("#button-Enter")}
-            >
-              ENTER
-            </.button>
-            <.button
-              id="button-Clear"
-              variant="solid"
-              color="success"
-              class="active:bg-accent w-22"
-              phx-click="calc-button"
-              phx-value-key="Clear"
-              data-js-do={animate_click("#button-Clear")}
-            >
-              CLEAR
-            </.button>
-            <.button
-              id="button-Backspace"
-              variant="solid"
-              color="success"
-              class="active:bg-accent w-22"
-              phx-click="calc-button"
-              phx-value-key="Backspace"
-              data-js-do={animate_click("#button-Backspace")}
-            >
+            <.calc_button key="Enter" color="danger" width="w-22">ENTER</.calc_button>
+            <.calc_button key="Clear" color="success" width="w-22">CLEAR</.calc_button>
+            <.calc_button key="Backspace" color="success" width="w-22">
               <.icon name="hero-backspace" class="icon" />
-            </.button>
+            </.calc_button>
           </div>
           <div class="grid grid-cols-4 grid-rows-3 gap-4 justify-items-center w-72 font-bold">
-            <.button
-              id="button-7"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="7"
-              data-js-do={animate_click("#button-7")}
-            >
-              7
-            </.button>
-            <.button
-              id="button-8"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="8"
-              data-js-do={animate_click("#button-8")}
-            >
-              8
-            </.button>
-            <.button
-              id="button-9"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="9"
-              data-js-do={animate_click("#button-9")}
-            >
-              9
-            </.button>
-            <.button
-              id="button-Divide"
-              variant="solid"
-              color="warning"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="Divide"
-              data-js-do={animate_click("#button-Divide")}
-            >
-              ÷
-            </.button>
-            <.button
-              id="button-4"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="4"
-              data-js-do={animate_click("#button-4")}
-            >
-              4
-            </.button>
-            <.button
-              id="button-5"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="5"
-              data-js-do={animate_click("#button-5")}
-            >
-              5
-            </.button>
-            <.button
-              id="button-6"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="6"
-              data-js-do={animate_click("#button-6")}
-            >
-              6
-            </.button>
-            <.button
-              id="button-Multiply"
-              variant="solid"
-              color="warning"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="Multiply"
-              data-js-do={animate_click("#button-Multiply")}
-            >
-              ×
-            </.button>
-            <.button
-              id="button-1"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="1"
-              data-js-do={animate_click("#button-1")}
-            >
-              1
-            </.button>
-            <.button
-              id="button-2"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="2"
-              data-js-do={animate_click("#button-2")}
-            >
-              2
-            </.button>
-            <.button
-              id="button-3"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="3"
-              data-js-do={animate_click("#button-3")}
-            >
-              3
-            </.button>
-            <.button
-              id="button-Subtract"
-              variant="solid"
-              color="warning"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="Subtract"
-              data-js-do={animate_click("#button-Subtract")}
-            >
-              -
-            </.button>
-            <.button
-              id="button-0"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="0"
-              data-js-do={animate_click("#button-0")}
-            >
-              0
-            </.button>
-            <.button
-              id="button-Dot"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="Dot"
-              data-js-do={animate_click("#button-Dot")}
-            >
-              .
-            </.button>
-            <.button
-              id="button-Sign"
-              variant="solid"
-              color="primary"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="Sign"
-              data-js-do={animate_click("#button-Sign")}
-            >
-              + / -
-            </.button>
-            <.button
-              id="button-Add"
-              variant="solid"
-              color="warning"
-              class="active:bg-accent w-16"
-              phx-click="calc-button"
-              phx-value-key="Add"
-              data-js-do={animate_click("#button-Add")}
-            >
-              +
-            </.button>
+            <.calc_button key="7" />
+            <.calc_button key="8" />
+            <.calc_button key="9" />
+            <.calc_button key="Divide" color="warning">&divide;</.calc_button>
+            <.calc_button key="4" />
+            <.calc_button key="5" />
+            <.calc_button key="6" />
+            <.calc_button key="Multiply" color="warning">&times;</.calc_button>
+            <.calc_button key="1" />
+            <.calc_button key="2" />
+            <.calc_button key="3" />
+            <.calc_button key="Subtract" color="warning">-</.calc_button>
+            <.calc_button key="0" />
+            <.calc_button key="Dot">&period;</.calc_button>
+            <.calc_button key="Sign">+ / -</.calc_button>
+            <.calc_button key="Add" color="warning">+</.calc_button>
           </div>
         </div>
       </div>
     </Layouts.app>
+    """
+  end
+
+  attr :key, :string, required: true
+  attr :color, :string, default: "primary"
+  attr :width, :string, default: "w-16"
+  slot :inner_block
+
+  defp calc_button(assigns) do
+    ~H"""
+    <.button
+      id={"button-#{@key}"}
+      variant="solid"
+      color={"#{@color}"}
+      class={"active:bg-accent #{@width}"}
+      phx-click="calc-button"
+      phx-value-key={"#{@key}"}
+      data-js-do={animate_click("#button-#{@key}")}
+    >
+      {render_slot(@inner_block) || @key}
+    </.button>
+    """
+  end
+
+  attr :soft, :boolean, default: false
+  slot :inner_block, required: true
+
+  defp calc_display(assigns) do
+    ~H"""
+    <div class={"#{"mb-1 w-72 min-h-12 text-right font-mono text-2xl bg-input p-2 rounded-lg"
+                    <> (if @soft, do: " text-foreground-softest", else: "")}"}>
+      {render_slot(@inner_block)}
+    </div>
     """
   end
 
