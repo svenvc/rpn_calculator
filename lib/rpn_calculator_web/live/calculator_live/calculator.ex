@@ -25,11 +25,17 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
             <.calc_button key="RollUp" color="info">
               R <.icon name="hero-arrow-up" class="icon" />
             </.calc_button>
-            <.calc_button key="Drop" color="info">DROP</.calc_button>
+            <.calc_button key="Drop" color="info">
+              DROP
+            </.calc_button>
           </div>
           <div class="grid grid-cols-3 grid-rows-1 gap-4 justify-items-center w-72 font-bold mb-4">
-            <.calc_button key="Enter" color="danger" width="w-22">ENTER</.calc_button>
-            <.calc_button key="Clear" color="success" width="w-22">CLEAR</.calc_button>
+            <.calc_button key="Enter" color="danger" width="w-22">
+              ENTER
+            </.calc_button>
+            <.calc_button key="Clear" color="success" width="w-22">
+              CLEAR
+            </.calc_button>
             <.calc_button key="Backspace" color="success" width="w-22">
               <.icon name="hero-backspace" class="icon" />
             </.calc_button>
@@ -98,17 +104,22 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   defp render_main_display(%RPNCalculator{} = rpn_calculator) do
     case rpn_calculator.input_digits do
-      "" -> RPNCalculator.top_of_stack(rpn_calculator) |> to_string()
+      "" -> RPNCalculator.top_of_stack(rpn_calculator) |> render_number()
       _ -> rpn_calculator.input_digits
     end
   end
 
   defp render_stack_at(%RPNCalculator{} = rpn_calculator, level) do
     if Enum.count(rpn_calculator.rpn_stack) > level do
-      rpn_calculator.rpn_stack |> Enum.at(level) |> to_string()
+      rpn_calculator.rpn_stack |> Enum.at(level) |> render_number()
     else
       ""
     end
+  end
+
+  defp render_number(number) do
+    integer = trunc(number)
+    to_string(if number == integer, do: integer, else: number)
   end
 
   defp animate_click(button_id) do
