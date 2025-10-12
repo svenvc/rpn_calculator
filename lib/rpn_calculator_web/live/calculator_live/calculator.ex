@@ -104,7 +104,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           remove them and leave the result on the top of the stack), <b>3</b>
           and finally <b>/</b>
           (to divide x by y).
-          Note how you no longer need the parenthesis, nor an equal sign.
+          Note how you no longer need parenthesis, nor an equal sign.
           Even a memory register is not really necessary.
         </p>
         <p>
@@ -242,7 +242,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
     <.sheet id="sheet-log" placement="right">
       <.header>Last Operations Log</.header>
-      <p class="mb-4">Thess are the last operations executed, most recent first.</p>
+      <p class="mb-4">These are the last operations executed, most recent first.</p>
       <div class="w-96 max-w-fit">
         <.button :for={key <- @key_log} variant="outline" class="m-1">{key}</.button>
       </div>
@@ -251,7 +251,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     <.sheet id="sheet-internal" placement="top" class="min-h-48">
       <.header>Internal State</.header>
       <p>This is the representation of the RPN Calculator's internal state.</p>
-      <div class="mt-4 whitespace-pre font-mono leading-10">{inspect(@rpn_calculator, pretty: true)}</div>
+      <div class="mt-4 whitespace-pre font-mono leading-10">{inspect(@rpn_calculator |> Map.take([:rpn_stack, :input_digits, :computed?]), pretty: true)}</div>
     </.sheet>
     """
   end
