@@ -66,22 +66,14 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-help")}>
             Help
           </.button>
-          <.button
-            variant="soft"
-            size="xs"
-            class="w-16"
-            phx-click={Fluxon.open_dialog("sheet-keyboard")}
+          <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-keyboard")}
           >
             Keyboard
           </.button>
           <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-log")}>
             Log
           </.button>
-          <.button
-            variant="soft"
-            size="xs"
-            class="w-16"
-            phx-click={Fluxon.open_dialog("sheet-internal")}
+          <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-internal")}
           >
             Internal
           </.button>
