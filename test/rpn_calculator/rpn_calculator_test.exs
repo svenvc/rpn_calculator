@@ -45,7 +45,25 @@ defmodule RPNCalculator.RPNCalculatorTest do
         "Drop"
       ])
 
-    assert RPNCalculator.top_of_stack(rpn_calculator) == 1
-    assert rpn_calculator.rpn_stack == [1, 2]
+    assert RPNCalculator.top_of_stack(rpn_calculator) == 2
+    assert rpn_calculator.rpn_stack == [2, 4]
+  end
+
+  test "using stack instead of parenthesis to compute ( 1 + 2 ) * ( 8 — 5 )" do
+    rpn_calculator =
+      %RPNCalculator{}
+      |> RPNCalculator.process_keys([
+        "1",
+        "Enter",
+        "2",
+        "Add",
+        "8",
+        "Enter",
+        "5",
+        "Subtract",
+        "Multiply"
+      ])
+
+    assert RPNCalculator.top_of_stack(rpn_calculator) == 9
   end
 end
