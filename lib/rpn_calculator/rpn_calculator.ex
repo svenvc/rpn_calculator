@@ -117,6 +117,14 @@ defmodule RPNCalculator.RPNCalculator do
     end)
   end
 
+  def process_key(%__MODULE__{} = rpn_calculator, "Power") do
+    rpn_calculator
+    |> update_rpn_stack(fn
+      [x | [y | tail]] -> [:math.pow(x, y) | tail]
+      rpn_stack -> rpn_stack
+    end)
+  end
+
   def process_key(%__MODULE__{} = rpn_calculator, "Pi") do
     rpn_calculator
     |> update_rpn_stack(fn rpn_stack -> [:math.pi() | rpn_stack] end)

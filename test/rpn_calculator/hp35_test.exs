@@ -117,6 +117,38 @@ defmodule RPNCalculator.HP35Test do
     ])
   end
 
+  test "hypotenuse of a right triangle" do
+    assert_sequence([
+      {"3", 3},
+      {"Enter", 3},
+      {"Multiply", 9},
+      {"4", 4},
+      {"Enter", 4},
+      {"Multiply", 16},
+      {"Add", 25},
+      {"Sqrt", 5}
+    ])
+  end
+
+  test "area of circle" do
+    assert_sequence([
+      {"3", 3},
+      {"Enter", 3},
+      {"Multiply", 9},
+      {"Pi", :math.pi()},
+      {"Multiply", 3 ** 2 * :math.pi()}
+    ])
+  end
+
+  test "2 to the power 7" do
+    assert_sequence([
+      {"7", 7},
+      {"Enter", 7},
+      {"2", 2},
+      {"Power", 128}
+    ])
+  end
+
   defp assert_sequence(steps) do
     Enum.map_reduce(
       steps,
