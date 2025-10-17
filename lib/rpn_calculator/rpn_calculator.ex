@@ -117,6 +117,29 @@ defmodule RPNCalculator.RPNCalculator do
     end)
   end
 
+  def process_key(%__MODULE__{} = rpn_calculator, "Pi") do
+    rpn_calculator
+    |> update_rpn_stack(fn rpn_stack -> [:math.pi() | rpn_stack] end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "E") do
+    rpn_calculator
+    |> update_rpn_stack(fn rpn_stack -> [:math.exp(1) | rpn_stack] end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Reciprocal") do
+    rpn_calculator
+    |> update_rpn_stack(fn
+      [0 | _] = rpn_stack -> rpn_stack
+      [x | tail] -> [1 / x | tail]
+    end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Sqrt") do
+    rpn_calculator
+    |> update_rpn_stack(fn [x | tail] -> [:math.sqrt(x) | tail] end)
+  end
+
   def process_key(%__MODULE__{} = rpn_calculator, "XY") do
     rpn_calculator
     |> update_rpn_stack(fn

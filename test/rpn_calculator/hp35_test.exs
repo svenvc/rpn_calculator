@@ -40,6 +40,24 @@ defmodule RPNCalculator.HP35Test do
     ])
   end
 
+  # page 8
+
+  test "square root of 49" do
+    assert_sequence([
+      {"4", 4},
+      {"9", 49},
+      {"Sqrt", 7}
+    ])
+  end
+
+  test "reciprocal of 25" do
+    assert_sequence([
+      {"2", 2},
+      {"5", 25},
+      {"Reciprocal", 0.04}
+    ])
+  end
+
   defp assert_sequence(steps) do
     Enum.map_reduce(steps, %RPNCalculator{}, fn {key, result}, rpn_calculator ->
       rpn_calculator = RPNCalculator.process_key(rpn_calculator, key)
