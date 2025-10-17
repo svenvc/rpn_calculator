@@ -2,7 +2,7 @@ defmodule RPNCalculator.RPNCalculator do
   defstruct rpn_stack: [0], input_digits: "", computed?: false
 
   def process_key(%__MODULE__{} = rpn_calculator, key)
-      when key in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"] do
+      when key in ~w(0 1 2 3 4 5 6 7 8 9) do
     if rpn_calculator.input_digits == "" and rpn_calculator.computed? do
       rpn_calculator
       |> update_rpn_stack(fn [top | tail] -> [0 | [top | tail]] end, clear_input: false)
