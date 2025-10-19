@@ -148,6 +148,60 @@ defmodule RPNCalculator.RPNCalculator do
     |> update_rpn_stack(fn [x | tail] -> [:math.sqrt(x) | tail] end)
   end
 
+  def process_key(%__MODULE__{} = rpn_calculator, "Exp") do
+    rpn_calculator
+    |> update_rpn_stack(fn [x | tail] -> [:math.exp(x) | tail] end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Log") do
+    rpn_calculator
+    |> update_rpn_stack(fn
+      [0 | _] = rpn_stack -> rpn_stack
+      [x | tail] -> [:math.log10(x) | tail]
+    end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Ln") do
+    rpn_calculator
+    |> update_rpn_stack(fn
+      [0 | _] = rpn_stack -> rpn_stack
+      [x | tail] -> [:math.log(x) | tail]
+    end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Sin") do
+    rpn_calculator
+    |> update_rpn_stack(fn [x | tail] -> [:math.sin(x / 180 * :math.pi()) | tail] end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Cos") do
+    rpn_calculator
+    |> update_rpn_stack(fn [x | tail] -> [:math.cos(x / 180 * :math.pi()) | tail] end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Tan") do
+    rpn_calculator
+    |> update_rpn_stack(fn
+      [0 | _] = rpn_stack -> rpn_stack
+      [x | tail] -> [:math.tan(x / 180 * :math.pi()) | tail]
+    end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "ArcSin") do
+    rpn_calculator
+    |> update_rpn_stack(fn [x | tail] -> [:math.asin(x) / :math.pi() * 180 | tail] end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "ArcCos") do
+    rpn_calculator
+    |> update_rpn_stack(fn [x | tail] -> [:math.acos(x) / :math.pi() * 180 | tail] end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "ArcTan") do
+    rpn_calculator
+    |> update_rpn_stack(fn [x | tail] -> [:math.atan(x) / :math.pi() * 180 | tail] end)
+  end
+
   def process_key(%__MODULE__{} = rpn_calculator, "XY") do
     rpn_calculator
     |> update_rpn_stack(fn

@@ -149,6 +149,80 @@ defmodule RPNCalculator.HP35Test do
     ])
   end
 
+  # page 16-17
+
+  test "9-th root of 512" do
+    assert_sequence([
+      {"512", 512},
+      {"Enter", 512},
+      {"9", 9},
+      {"Reciprocal", 1 / 9},
+      {"XY", 512},
+      {"Power", :math.pow(512, 1 / 9)}
+    ])
+  end
+
+  # page 18
+
+  test "relation barometric pressure and altitude" do
+    assert_sequence([
+      {"25000", 25000},
+      {"Enter", 25000},
+      {"30", 30},
+      {"Enter", 30},
+      {"9.4", 9.4},
+      {"Divide", 30 / 9.4},
+      {"Ln", :math.log(30 / 9.4)},
+      {"Multiply", :math.log(30 / 9.4) * 25000}
+    ])
+  end
+
+  test "sine 30.5" do
+    assert_sequence([
+      {"30.5", 30.5},
+      {"Sin", :math.sin(30.5 / 180 * :math.pi())}
+    ])
+  end
+
+  # page 19
+
+  test "cosine 150" do
+    assert_sequence([
+      {"150", 150},
+      {"Cos", :math.cos(150 / 180 * :math.pi())}
+    ])
+  end
+
+  test "tangent -25.6" do
+    assert_sequence([
+      {"25.6", 25.6},
+      {"Sign", -25.6},
+      {"Tan", :math.tan(-25.6 / 180 * :math.pi())}
+    ])
+  end
+
+  test "inverse sine .3" do
+    assert_sequence([
+      {".3", 0.3},
+      {"ArcSin", :math.asin(0.3) / :math.pi() * 180}
+    ])
+  end
+
+  test "inverse cosine -.7" do
+    assert_sequence([
+      {".7", 0.7},
+      {"Sign", -0.7},
+      {"ArcCos", :math.acos(-0.7) / :math.pi() * 180}
+    ])
+  end
+
+  test "inverse tangent 10.2" do
+    assert_sequence([
+      {"10.2", 10.2},
+      {"ArcTan", :math.atan(10.2) / :math.pi() * 180}
+    ])
+  end
+
   defp assert_sequence(steps) do
     Enum.map_reduce(
       steps,
@@ -157,11 +231,14 @@ defmodule RPNCalculator.HP35Test do
         sub_keys = String.split(key, "", trim: true)
 
         rpn_calculator =
-          if Enum.all?(sub_keys, fn x -> x in ~w(0 1 2 3 4 5 6 7 8 9 .) end) do
-            sub_keys = Enum.map(sub_keys, fn
-              "." -> "Dot"
-              key -> key
-            end)
+          if Enum.all?(sub_keys, fn x -> x in ~w(0 1 2 3 4 5 6 7 8 9 . -) end) do
+            sub_keys =
+              Enum.map(sub_keys, fn
+                "." -> "Dot"
+                "-" -> "Sign"
+                key -> key
+              end)
+
             RPNCalculator.process_keys(rpn_calculator, sub_keys)
           else
             RPNCalculator.process_key(rpn_calculator, key)

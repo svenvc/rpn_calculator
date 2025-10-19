@@ -249,7 +249,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   end
 
   attr :key, :string, required: true
-  attr :color, :string, default: "primary"
+  attr :color, :string, default: "primary", values: ~w(primary danger warning success info)
   attr :width, :string, default: "w-16"
   slot :inner_block
 
