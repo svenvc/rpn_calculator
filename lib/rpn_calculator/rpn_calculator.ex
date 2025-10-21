@@ -155,12 +155,18 @@ defmodule RPNCalculator.RPNCalculator do
 
   def process_key(%__MODULE__{} = rpn_calculator, "Pi") do
     rpn_calculator
-    |> update_rpn_stack(fn rpn_stack -> [:math.pi() | rpn_stack] end)
+    |> update_rpn_stack(fn
+      [0] -> [:math.pi()]
+      rpn_stack -> [:math.pi() | rpn_stack]
+    end)
   end
 
   def process_key(%__MODULE__{} = rpn_calculator, "E") do
     rpn_calculator
-    |> update_rpn_stack(fn rpn_stack -> [:math.exp(1) | rpn_stack] end)
+    |> update_rpn_stack(fn
+      [0] -> [:math.exp(1)]
+      rpn_stack -> [:math.exp(1) | rpn_stack]
+    end)
   end
 
   def process_key(%__MODULE__{} = rpn_calculator, "Reciprocal") do
