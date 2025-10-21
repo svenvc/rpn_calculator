@@ -243,7 +243,9 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     <.sheet id="sheet-internal" placement="top" class="min-h-48">
       <.header>Internal State</.header>
       <p>This is the representation of the RPN Calculator's internal state.</p>
-      <div class="mt-4 whitespace-pre font-mono leading-10">{inspect(@rpn_calculator |> Map.take([:rpn_stack, :input_digits, :computed?]), pretty: true)}</div>
+      <div class="mt-4 whitespace-pre font-mono leading-10">
+        {inspect(@rpn_calculator |> Map.take([:rpn_stack, :input_digits, :computed?]), pretty: true)}
+      </div>
     </.sheet>
     """
   end
@@ -328,38 +330,12 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     "d" => "Drop"
   }
 
-  @allowed_keys [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "Add",
-    "Subtract",
-    "Multiply",
-    "Divide",
-    "Dot",
-    "Sign",
-    "Enter",
-    "Clear",
-    "Backspace",
-    "XY",
-    "RollDown",
-    "RollUp",
-    "Drop"
-  ]
-
   @impl true
   def handle_event("calc-keyup", %{"key" => key}, socket) do
     # IO.inspect(key, label: "keyup")
     translated_key = Map.get(@key_translations, key, key)
 
-    if translated_key in @allowed_keys do
+    if translated_key in RPNCalculator.known_keys() do
       {:noreply,
        socket
        |> process_key(translated_key)
@@ -375,10 +351,14 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     {:noreply, socket |> process_key(key)}
   end
 
-  defp process_key(socket, key) when key in @allowed_keys do
+  defp process_key(socket, key) do
     # IO.inspect(key, label: "processing")
-    rpn_calculator = socket.assigns.rpn_calculator |> RPNCalculator.process_key(key)
-    # IO.inspect(rpn_calculator, label: "rpn_calculator")
-    assign(socket, rpn_calculator: rpn_calculator, key_log: [key | socket.assigns.key_log])
+    if key in RPNCalculator.known_keys() do
+      rpn_calculator = socket.assigns.rpn_calculator |> RPNCalculator.process_key(key)
+      # IO.inspect(rpn_calculator, label: "rpn_calculator")
+      assign(socket, rpn_calculator: rpn_calculator, key_log: [key | socket.assigns.key_log])
+    else
+      socket
+    end
   end
 end

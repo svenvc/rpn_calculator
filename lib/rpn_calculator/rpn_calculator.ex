@@ -1,6 +1,22 @@
 defmodule RPNCalculator.RPNCalculator do
   defstruct rpn_stack: [0], input_digits: "", computed?: false
 
+  @known_keys ~w(
+    0 1 2 3 4 5 6 7 8 9
+    Dot Sign
+    Enter XY RollDown RollUp Drop
+    Add Subtract Multiply Divide
+    Backspace Clear
+    EE Pi E
+    Sin Cos Tan
+    ArcSin ArcCos ArcTan
+    Power Exp
+    Square Sqrt
+    Log Ln
+    Reciprocal)
+
+  def known_keys, do: @known_keys
+
   def process_key(%__MODULE__{} = rpn_calculator, key)
       when key in ~w(0 1 2 3 4 5 6 7 8 9) do
     if rpn_calculator.input_digits == "" and rpn_calculator.computed? do
@@ -55,13 +71,13 @@ defmodule RPNCalculator.RPNCalculator do
     end
   end
 
-  def process_key(%__MODULE__{} = rpn_calculator, "Clear") do
+  def process_key(%__MODULE__{} = rpn_calculator, "EE") do
     rpn_calculator
-    |> update_rpn_stack(fn rpn_stack ->
-      if rpn_calculator.input_digits == "" do
-        [0]
+    |> update_input_digits(fn input_digits ->
+      if input_digits == "" || String.contains?(input_digits, "e") do
+        input_digits
       else
-        rpn_stack
+        input_digits <> "e"
       end
     end)
     |> update_x()
@@ -73,6 +89,18 @@ defmodule RPNCalculator.RPNCalculator do
       cond do
         String.length(input_digits) == 2 and String.first(input_digits) == "-" -> ""
         true -> String.slice(input_digits, 0..-2//1)
+      end
+    end)
+    |> update_x()
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Clear") do
+    rpn_calculator
+    |> update_rpn_stack(fn rpn_stack ->
+      if rpn_calculator.input_digits == "" do
+        [0]
+      else
+        rpn_stack
       end
     end)
     |> update_x()
@@ -146,6 +174,11 @@ defmodule RPNCalculator.RPNCalculator do
   def process_key(%__MODULE__{} = rpn_calculator, "Sqrt") do
     rpn_calculator
     |> update_rpn_stack(fn [x | tail] -> [:math.sqrt(x) | tail] end)
+  end
+
+  def process_key(%__MODULE__{} = rpn_calculator, "Square") do
+    rpn_calculator
+    |> update_rpn_stack(fn [x | tail] -> [x * x | tail] end)
   end
 
   def process_key(%__MODULE__{} = rpn_calculator, "Exp") do
