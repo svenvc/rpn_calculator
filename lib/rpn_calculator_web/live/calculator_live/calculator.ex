@@ -15,7 +15,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           <.calc_display>{render_main_display(@rpn_calculator)}</.calc_display>
         </div>
         <div id="keypad">
-          <div class="grid grid-cols-4 grid-rows-1 gap-4 justify-items-center w-72 font-bold mb-4">
+          <div class="grid grid-cols-4 grid-rows-1 gap-2 justify-items-center w-72 font-bold mb-2">
             <.calc_button key="XY" color="info">
               X <.icon name="hero-arrows-right-left" class="icon" />Y
             </.calc_button>
@@ -29,7 +29,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
               DROP
             </.calc_button>
           </div>
-          <div class="grid grid-cols-4 grid-rows-1 gap-4 justify-items-center w-72 font-bold mb-4">
+          <div class="grid grid-cols-4 grid-rows-1 gap-2 justify-items-center w-72 font-bold mb-2">
             <.calc_button key="Enter" color="danger">
               ENTER
             </.calc_button>
@@ -43,7 +43,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
               <.icon name="hero-backspace" class="icon" />
             </.calc_button>
           </div>
-          <div :if={!@basic_style} class="grid grid-cols-4 grid-rows-3 gap-4 justify-items-center w-72 font-bold mb-4">
+          <div :if={!@basic_style} class="grid grid-cols-4 grid-rows-3 gap-2 justify-items-center w-72 font-bold mb-2">
             <.calc_button key="Sin" color="warning">SIN</.calc_button>
             <.calc_button key="Cos" color="warning">COS</.calc_button>
             <.calc_button key="Tan" color="warning">TAN</.calc_button>
@@ -61,7 +61,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
             <.calc_button key="E" color="success">e</.calc_button>
             <.calc_button key="EE" />
           </div>
-          <div class="grid grid-cols-4 grid-rows-3 gap-4 justify-items-center w-72 font-bold">
+          <div class="grid grid-cols-4 grid-rows-3 gap-2 justify-items-center w-72 font-bold">
             <.calc_button key="7" />
             <.calc_button key="8" />
             <.calc_button key="9" />
@@ -82,7 +82,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
         </div>
         <div
           id="help-panel"
-          class="grid grid-cols-4 grid-rows-1 gap-4 justify-items-center w-72 mt-16"
+          class="grid grid-cols-4 grid-rows-1 gap-4 justify-items-center w-72 mt-10"
         >
           <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-help")}>
             Help
@@ -175,7 +175,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Enter" color="danger" width="w-22">
+              <.calc_button key="Enter" color="danger">
                 ENTER
               </.calc_button>
             </:cell>
@@ -184,7 +184,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Clear" color="success" width="w-22">
+              <.calc_button key="Clear" color="success">
                 CLEAR
               </.calc_button>
             </:cell>
@@ -193,7 +193,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Backspace" color="success" width="w-22">
+              <.calc_button key="Backspace" color="success">
                 <.icon name="hero-backspace" class="icon" />
               </.calc_button>
             </:cell>
