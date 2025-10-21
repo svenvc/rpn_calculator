@@ -43,7 +43,10 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
               <.icon name="hero-backspace" class="icon" />
             </.calc_button>
           </div>
-          <div :if={!@basic_style} class="grid grid-cols-4 grid-rows-3 gap-2 justify-items-center w-72 font-bold mb-2">
+          <div
+            :if={!@basic_style}
+            class="grid grid-cols-4 grid-rows-3 gap-2 justify-items-center w-72 font-bold mb-2"
+          >
             <.calc_button key="Sin" color="warning">SIN</.calc_button>
             <.calc_button key="Cos" color="warning">COS</.calc_button>
             <.calc_button key="Tan" color="warning">TAN</.calc_button>
@@ -264,9 +267,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     <.sheet id="sheet-internal" placement="top" class="min-h-48">
       <.header>Internal State</.header>
       <p>This is the representation of the RPN Calculator's internal state.</p>
-      <div class="mt-4 whitespace-pre font-mono leading-10">
-        {inspect(@rpn_calculator |> Map.take([:rpn_stack, :input_digits, :computed?]), pretty: true)}
-      </div>
+      <div class="mt-4 whitespace-pre font-mono leading-10">{render_internals(@rpn_calculator)}</div>
     </.sheet>
     """
   end
@@ -327,6 +328,13 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   defp render_number(number) do
     integer = trunc(number)
     to_string(if number == integer, do: integer, else: number)
+  end
+
+  defp render_internals(rpn_calculator) do
+    inspect(
+      rpn_calculator |> Map.take([:rpn_stack, :input_digits, :computed?]),
+      pretty: true
+    )
   end
 
   defp animate_click(button_id) do
