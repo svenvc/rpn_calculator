@@ -29,16 +29,37 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
               DROP
             </.calc_button>
           </div>
-          <div class="grid grid-cols-3 grid-rows-1 gap-4 justify-items-center w-72 font-bold mb-4">
-            <.calc_button key="Enter" color="danger" width="w-22">
+          <div class="grid grid-cols-4 grid-rows-1 gap-4 justify-items-center w-72 font-bold mb-4">
+            <.calc_button key="Enter" color="danger">
               ENTER
             </.calc_button>
-            <.calc_button key="Clear" color="success" width="w-22">
+            <.calc_button key="Clear" color="success">
               CLEAR
             </.calc_button>
-            <.calc_button key="Backspace" color="success" width="w-22">
+            <.calc_button key="Style" color="success">
+              <.icon name="hero-calculator" class="icon" />
+            </.calc_button>
+            <.calc_button key="Backspace" color="success">
               <.icon name="hero-backspace" class="icon" />
             </.calc_button>
+          </div>
+          <div :if={!@basic_style} class="grid grid-cols-4 grid-rows-3 gap-4 justify-items-center w-72 font-bold mb-4">
+            <.calc_button key="Sin" color="warning">SIN</.calc_button>
+            <.calc_button key="Cos" color="warning">COS</.calc_button>
+            <.calc_button key="Tan" color="warning">TAN</.calc_button>
+            <.calc_button key="Power" color="warning">x<sup>y</sup></.calc_button>
+            <.calc_button key="ArcSin" color="warning">ASIN</.calc_button>
+            <.calc_button key="ArcCos" color="warning">ACOS</.calc_button>
+            <.calc_button key="ArcTan" color="warning">ATAN</.calc_button>
+            <.calc_button key="Reciprocal" color="warning">1 / x</.calc_button>
+            <.calc_button key="Square" color="warning">x<sup>2</sup></.calc_button>
+            <.calc_button key="Sqrt" color="warning">&radic; x</.calc_button>
+            <.calc_button key="Exp" color="warning">e<sup>x</sup></.calc_button>
+            <.calc_button key="Ln" color="warning">LN</.calc_button>
+            <.calc_button key="Log" color="warning">LOG</.calc_button>
+            <.calc_button key="Pi" color="success">&#960;</.calc_button>
+            <.calc_button key="E" color="success">e</.calc_button>
+            <.calc_button key="EE" />
           </div>
           <div class="grid grid-cols-4 grid-rows-3 gap-4 justify-items-center w-72 font-bold">
             <.calc_button key="7" />
@@ -285,7 +306,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, rpn_calculator: %RPNCalculator{}, key_log: [])}
+    {:ok, assign(socket, rpn_calculator: %RPNCalculator{}, key_log: [], basic_style: true)}
   end
 
   defp render_main_display(%RPNCalculator{} = rpn_calculator) do
@@ -343,6 +364,12 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     else
       {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_event("calc-button", %{"key" => "Style"}, socket) do
+    # IO.inspect(key, label: "button")
+    {:noreply, assign(socket, basic_style: !socket.assigns.basic_style)}
   end
 
   @impl true
