@@ -17,6 +17,8 @@ defmodule RPNCalculator.RPNCalculator do
 
   def known_keys, do: @known_keys
 
+  @max_input_length 16
+
   def process_key(%__MODULE__{} = rpn_calculator, key)
       when key in ~w(0 1 2 3 4 5 6 7 8 9) do
     if rpn_calculator.input_digits == "" and rpn_calculator.computed? do
@@ -28,6 +30,7 @@ defmodule RPNCalculator.RPNCalculator do
     |> update_input_digits(fn input_digits ->
       cond do
         input_digits == "0" -> key
+        String.length(input_digits) >= @max_input_length -> input_digits
         String.last(input_digits) == "e" && key == "0" -> input_digits
         true -> input_digits <> key
       end
@@ -309,6 +312,27 @@ defmodule RPNCalculator.RPNCalculator do
   def top_of_stack(%__MODULE__{} = rpn_calculator) do
     [top_of_stack | _tail] = rpn_calculator.rpn_stack
     top_of_stack
+  end
+
+  @max_integer 9999_999_999_999_999
+  @max_output_length 18
+
+  def render_number(number) do
+    integer = trunc(number)
+
+    cond do
+      number == integer && abs(integer) <= @max_integer ->
+        to_string(integer)
+
+      true ->
+        string = :erlang.float_to_binary(number * 1.0, [:short])
+
+        if String.length(string) > @max_output_length do
+          :erlang.float_to_binary(number * 1.0, [{:scientific, 8}])
+        else
+          string
+        end
+    end
   end
 
   defp update_rpn_stack(%__MODULE__{} = rpn_calculator, fun, opts \\ [clear_input: true]) do

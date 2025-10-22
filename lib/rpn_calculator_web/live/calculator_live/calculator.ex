@@ -312,22 +312,17 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   defp render_main_display(%RPNCalculator{} = rpn_calculator) do
     case rpn_calculator.input_digits do
-      "" -> RPNCalculator.top_of_stack(rpn_calculator) |> render_number()
+      "" -> RPNCalculator.top_of_stack(rpn_calculator) |> RPNCalculator.render_number()
       _ -> rpn_calculator.input_digits
     end
   end
 
   defp render_stack_at(%RPNCalculator{} = rpn_calculator, level) do
     if Enum.count(rpn_calculator.rpn_stack) > level do
-      rpn_calculator.rpn_stack |> Enum.at(level) |> render_number()
+      rpn_calculator.rpn_stack |> Enum.at(level) |> RPNCalculator.render_number()
     else
       ""
     end
-  end
-
-  defp render_number(number) do
-    integer = trunc(number)
-    to_string(if number == integer, do: integer, else: number)
   end
 
   defp render_internals(rpn_calculator) do
@@ -356,7 +351,8 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     "~" => "XY",
     "ArrowDown" => "RollDown",
     "ArrowUp" => "RollUp",
-    "d" => "Drop"
+    "d" => "Drop",
+    "e" => "EE"
   }
 
   @impl true
