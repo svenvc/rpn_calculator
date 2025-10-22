@@ -175,6 +175,26 @@ defmodule RPNCalculator.HP35Test do
     ])
   end
 
+  # page 11
+
+  test "monthly payment on loan" do
+    assert_sequence([
+      {"30000", 30_000},
+      {"Enter", 30_000},
+      {".005", 0.005},
+      {"Multiply", 30_000 * 0.005},
+      {"1", 1},
+      {"Enter", 1},
+      {"360", 360},
+      {"Enter", 360},
+      {"1.005", 1.005},
+      {"Power", :math.pow(1.005, 360)},
+      {"Reciprocal", 1 / :math.pow(1.005, 360)},
+      {"Subtract", 1 - 1 / :math.pow(1.005, 360)},
+      {"Divide", 30_000 * 0.005 / (1 - 1 / :math.pow(1.005, 360))}
+    ])
+  end
+
   # page 12-13
 
   test "exponent entry 15.6e12" do
