@@ -28,6 +28,7 @@ defmodule RPNCalculator.RPNCalculator do
     |> update_input_digits(fn input_digits ->
       cond do
         input_digits == "0" -> key
+        String.last(input_digits) == "e" && key == "0" -> input_digits
         true -> input_digits <> key
       end
     end)
@@ -37,13 +38,17 @@ defmodule RPNCalculator.RPNCalculator do
   def process_key(%__MODULE__{} = rpn_calculator, "Dot") do
     rpn_calculator
     |> update_input_digits(fn input_digits ->
-      if String.contains?(input_digits, ".") do
+      if String.contains?(input_digits, [".", "e"]) do
         input_digits
       else
         if input_digits == "" do
           "0."
         else
-          input_digits <> "."
+          if String.contains?(input_digits, "e") do
+            input_digits
+          else
+            input_digits <> "."
+          end
         end
       end
     end)
@@ -54,10 +59,26 @@ defmodule RPNCalculator.RPNCalculator do
     rpn_calculator =
       rpn_calculator
       |> update_input_digits(fn input_digits ->
-        cond do
-          input_digits == "" -> ""
-          String.first(input_digits) == "-" -> String.slice(input_digits, 1..-1//1)
-          true -> "-" <> input_digits
+        if String.contains?(input_digits, "e") do
+          cond do
+            String.last(input_digits) == "e" ->
+              input_digits
+
+            true ->
+              [mantisse, exponent] = String.split(input_digits, "e")
+
+              if String.first(exponent) == "-" do
+                mantisse <> "e" <> String.trim_leading(exponent, "-")
+              else
+                mantisse <> "e-" <> exponent
+              end
+          end
+        else
+          cond do
+            input_digits == "" -> ""
+            String.first(input_digits) == "-" -> String.slice(input_digits, 1..-1//1)
+            true -> "-" <> input_digits
+          end
         end
       end)
 
@@ -77,7 +98,11 @@ defmodule RPNCalculator.RPNCalculator do
       if input_digits == "" || String.contains?(input_digits, "e") do
         input_digits
       else
-        input_digits <> "e"
+        if String.contains?(input_digits, ".") do
+          input_digits <> "e"
+        else
+          input_digits <> ".0e"
+        end
       end
     end)
     |> update_x()
@@ -320,14 +345,22 @@ defmodule RPNCalculator.RPNCalculator do
   defp parse_input(""), do: 0
 
   defp parse_input(input_digits) do
-    if String.contains?(input_digits, ".") do
-      if String.last(input_digits) == "." do
-        String.to_integer(String.slice(input_digits, 0..-2//1))
+    if String.contains?(input_digits, "e") do
+      if String.last(input_digits) == "e" do
+        String.to_float(String.slice(input_digits, 0..-2//1))
       else
         String.to_float(input_digits)
       end
     else
-      String.to_integer(input_digits)
+      if String.contains?(input_digits, ".") do
+        if String.last(input_digits) == "." do
+          String.to_integer(String.slice(input_digits, 0..-2//1))
+        else
+          String.to_float(input_digits)
+        end
+      else
+        String.to_integer(input_digits)
+      end
     end
   end
 end
