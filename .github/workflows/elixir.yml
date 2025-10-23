@@ -1,0 +1,28 @@
+name: Elixir CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.19'
+        otp-version: '28'
+    - name: Add flxuxon hex repo
+      run: mix hex.repo add fluxon https://repo.fluxonui.com --fetch-public-key {{ secrets.FLUXON_KEY_FINGERPRINT }} --auth-key {{ secrets.FLUXON_LICENSE_KEY }}
+    - name: Install dependencies
+      run: mix deps.get
+    - name: Run tests
+      run: mix test
