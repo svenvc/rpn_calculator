@@ -41,18 +41,10 @@ defmodule RPNCalculator.RPNCalculator do
   def process_key(%__MODULE__{} = rpn_calculator, "Dot") do
     rpn_calculator
     |> update_input_digits(fn input_digits ->
-      if String.contains?(input_digits, [".", "e"]) do
-        input_digits
-      else
-        if input_digits == "" do
-          "0."
-        else
-          if String.contains?(input_digits, "e") do
-            input_digits
-          else
-            input_digits <> "."
-          end
-        end
+      cond do
+        String.contains?(input_digits, ".") -> input_digits
+        input_digits == "" -> "0."
+        true -> input_digits <> "."
       end
     end)
     |> update_x()
@@ -115,8 +107,14 @@ defmodule RPNCalculator.RPNCalculator do
     rpn_calculator
     |> update_input_digits(fn input_digits ->
       cond do
-        String.length(input_digits) == 2 and String.first(input_digits) == "-" -> ""
-        true -> String.slice(input_digits, 0..-2//1)
+        String.length(input_digits) == 2 and String.first(input_digits) == "-" ->
+          ""
+
+        String.contains?(input_digits, "e") and String.at(input_digits, -2) == "-" ->
+          String.slice(input_digits, 0..-3//1)
+
+        true ->
+          String.slice(input_digits, 0..-2//1)
       end
     end)
     |> update_x()
@@ -343,7 +341,10 @@ defmodule RPNCalculator.RPNCalculator do
     new_x = parse_input(rpn_calculator.input_digits)
 
     rpn_calculator
-    |> update_rpn_stack(fn [_top | tail] -> [new_x | tail] end, clear_input: false)
+    |> update_rpn_stack(
+      fn [_top | tail] -> [new_x | tail] end,
+      clear_input: false
+    )
     |> update_computed?(false)
   end
 
