@@ -8,12 +8,13 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     ~H"""
     <Layouts.app flash={@flash}>
       <div id="calculator" phx-window-keyup="calc-keyup" class="grid place-content-center">
-        <div id="display" class="mb-3">
+        <div id="display" class="mb-2">
           <.calc_display soft>{render_stack_at(@rpn_calculator, 3)}</.calc_display>
           <.calc_display soft>{render_stack_at(@rpn_calculator, 2)}</.calc_display>
           <.calc_display soft>{render_stack_at(@rpn_calculator, 1)}</.calc_display>
           <.calc_display>{render_main_display(@rpn_calculator)}</.calc_display>
         </div>
+        <.alert :if={@error_msg} color="danger" hide_icon hide_close class="w-72 mb-2">{@error_msg}</.alert>
         <div id="keypad">
           <div class="grid grid-cols-4 grid-rows-1 gap-2 justify-items-center w-72 font-bold mb-2">
             <.calc_button key="XY" color="info">
@@ -307,7 +308,13 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, rpn_calculator: %RPNCalculator{}, key_log: [], basic_style: true)}
+    socket = socket
+    |> assign(rpn_calculator: %RPNCalculator{})
+    |> assign(key_log: [])
+    |> assign(basic_style: true)
+    |> assign(error_msg: nil)
+
+    {:ok, socket}
   end
 
   defp render_main_display(%RPNCalculator{} = rpn_calculator) do
@@ -385,9 +392,16 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   defp process_key(socket, key) do
     # IO.inspect(key, label: "processing")
     if key in RPNCalculator.known_keys() do
-      rpn_calculator = socket.assigns.rpn_calculator |> RPNCalculator.process_key(key)
-      # IO.inspect(rpn_calculator, label: "rpn_calculator")
-      assign(socket, rpn_calculator: rpn_calculator, key_log: [key | socket.assigns.key_log])
+      try do
+        rpn_calculator = socket.assigns.rpn_calculator |> RPNCalculator.process_key(key)
+        # IO.inspect(rpn_calculator, label: "rpn_calculator")
+        socket
+        |> assign(rpn_calculator: rpn_calculator)
+        |> assign(key_log: [key | socket.assigns.key_log])
+        |> assign(error_msg: nil)
+      rescue
+        e -> socket |> assign(error_msg: Exception.message(e))
+      end
     else
       socket
     end
