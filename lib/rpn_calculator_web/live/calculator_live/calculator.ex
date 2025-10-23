@@ -14,7 +14,9 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           <.calc_display soft>{render_stack_at(@rpn_calculator, 1)}</.calc_display>
           <.calc_display>{render_main_display(@rpn_calculator)}</.calc_display>
         </div>
-        <.alert :if={@error_msg} color="danger" hide_icon hide_close class="w-72 mb-2">{@error_msg}</.alert>
+        <.alert :if={@error_msg} color="danger" hide_icon hide_close class="w-72 mb-2">
+          {@error_msg}
+        </.alert>
         <div id="keypad">
           <div class="grid grid-cols-4 grid-rows-1 gap-2 justify-items-center w-72 font-bold mb-2">
             <.calc_button key="XY" color="info">
@@ -37,9 +39,15 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
             <.calc_button key="Clear" color="success">
               CLEAR
             </.calc_button>
-            <.calc_button key="Style" color="success">
-              <.icon name="hero-calculator" class="icon" />
-            </.calc_button>
+            <.tooltip
+              value="Switch between basic and scientific calculator style"
+              delay={1000}
+              class="font-normal"
+            >
+              <.calc_button key="Style" color="success">
+                <.icon name="hero-calculator" class="icon" />
+              </.calc_button>
+            </.tooltip>
             <.calc_button key="Backspace" color="success">
               <.icon name="hero-backspace" class="icon" />
             </.calc_button>
@@ -88,25 +96,51 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           id="help-panel"
           class="grid grid-cols-4 grid-rows-1 gap-4 justify-items-center w-72 mt-10"
         >
-          <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-help")}>
-            Help
-          </.button>
-          <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-keyboard")}
-          >
-            Keyboard
-          </.button>
-          <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-log")}>
-            Log
-          </.button>
-          <.button variant="soft" size="xs" class="w-16" phx-click={Fluxon.open_dialog("sheet-internal")}
-          >
-            Internal
-          </.button>
+          <.tooltip value="How to use this calculator ?" delay={1000}>
+            <.button
+              variant="soft"
+              size="xs"
+              class="w-16"
+              phx-click={Fluxon.open_dialog("sheet-help-instructions")}
+            >
+              Help
+            </.button>
+          </.tooltip>
+          <.tooltip value="What are the keyboard key equivalents ?" delay={1000}>
+            <.button
+              variant="soft"
+              size="xs"
+              class="w-16"
+              phx-click={Fluxon.open_dialog("sheet-keyboard-shortcuts")}
+            >
+              Keyboard
+            </.button>
+          </.tooltip>
+          <.tooltip value="Show a log of all buttons that were pressed" delay={1000}>
+            <.button
+              variant="soft"
+              size="xs"
+              class="w-16"
+              phx-click={Fluxon.open_dialog("sheet-key-log")}
+            >
+              Log
+            </.button>
+          </.tooltip>
+          <.tooltip value="Show the state of the internal model of the calculator" delay={1000}>
+            <.button
+              variant="soft"
+              size="xs"
+              class="w-16"
+              phx-click={Fluxon.open_dialog("sheet-internals")}
+            >
+              Internal
+            </.button>
+          </.tooltip>
         </div>
       </div>
     </Layouts.app>
 
-    <.sheet id="sheet-help" placement="top" class="min-h-48">
+    <.sheet id="sheet-help-instructions" placement="top" class="min-h-48">
       <.header>Help</.header>
       <div class="space-y-4 w-128 max-w-fit">
         <p>
@@ -132,7 +166,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
       </div>
     </.sheet>
 
-    <.sheet id="sheet-keyboard" placement="left">
+    <.sheet id="sheet-keyboard-shortcuts" placement="left">
       <.header>Keyboard Shortcuts</.header>
       <.table>
         <.table_head>
@@ -143,7 +177,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
         <.table_body>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="XY" color="info">
+              <.calc_button key="XY" color="info" id_prefix="help-button">
                 X <.icon name="hero-arrows-right-left" class="icon" />Y
               </.calc_button>
             </:cell>
@@ -152,7 +186,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="RollDown" color="info">
+              <.calc_button key="RollDown" color="info" id_prefix="help-button">
                 R <.icon name="hero-arrow-down" class="icon" />
               </.calc_button>
             </:cell>
@@ -161,7 +195,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="RollUp" color="info">
+              <.calc_button key="RollUp" color="info" id_prefix="help-button">
                 R <.icon name="hero-arrow-up" class="icon" />
               </.calc_button>
             </:cell>
@@ -170,7 +204,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Drop" color="info">
+              <.calc_button key="Drop" color="info" id_prefix="help-button">
                 DROP
               </.calc_button>
             </:cell>
@@ -179,7 +213,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Enter" color="danger">
+              <.calc_button key="Enter" color="danger" id_prefix="help-button">
                 ENTER
               </.calc_button>
             </:cell>
@@ -188,7 +222,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Clear" color="success">
+              <.calc_button key="Clear" color="success" id_prefix="help-button">
                 CLEAR
               </.calc_button>
             </:cell>
@@ -197,7 +231,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Backspace" color="success">
+              <.calc_button key="Backspace" color="success" id_prefix="help-button">
                 <.icon name="hero-backspace" class="icon" />
               </.calc_button>
             </:cell>
@@ -206,49 +240,60 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Add" color="warning">+</.calc_button>
+              <.calc_button key="Add" color="warning" id_prefix="help-button">+</.calc_button>
             </:cell>
             <:cell class="py-2">Add</:cell>
             <:cell class="py-2"><.button variant="outline">+</.button></:cell>
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Subtract" color="warning">-</.calc_button>
+              <.calc_button key="Subtract" color="warning" id_prefix="help-button">-</.calc_button>
             </:cell>
             <:cell class="py-2">Subtract</:cell>
             <:cell class="py-2"><.button variant="outline">-</.button></:cell>
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Multiply" color="warning">&times;</.calc_button>
+              <.calc_button key="Multiply" color="warning" id_prefix="help-button">
+                &times;
+              </.calc_button>
             </:cell>
             <:cell class="py-2">Multiply</:cell>
             <:cell class="py-2"><.button variant="outline">*</.button></:cell>
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Divide" color="warning">&divide;</.calc_button>
+              <.calc_button key="Divide" color="warning" id_prefix="help-button">
+                &divide;
+              </.calc_button>
             </:cell>
             <:cell class="py-2">Divide</:cell>
             <:cell class="py-2"><.button variant="outline">/</.button></:cell>
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Sign">+ / -</.calc_button>
+              <.calc_button key="Sign" id_prefix="help-button">+ / -</.calc_button>
             </:cell>
             <:cell class="py-2">Sign</:cell>
             <:cell class="py-2"><.button variant="outline">s</.button></:cell>
           </.table_row>
           <.table_row>
             <:cell class="py-2">
-              <.calc_button key="Dot">&period;</.calc_button>
+              <.calc_button key="Dot" id_prefix="help-button">&period;</.calc_button>
             </:cell>
             <:cell class="py-2">Dot</:cell>
             <:cell class="py-2"><.button variant="outline">.</.button></:cell>
           </.table_row>
+          <.table_row :if={!@basic_style}>
+            <:cell class="py-2">
+              <.calc_button key="EE" id_prefix="help-button">EE</.calc_button>
+            </:cell>
+            <:cell class="py-2">EE</:cell>
+            <:cell class="py-2"><.button variant="outline">e</.button></:cell>
+          </.table_row>
           <.table_row :for={number <- 0..9}>
             <:cell class="py-2">
-              <.calc_button key={"#{number}"}>{number}</.calc_button>
+              <.calc_button key={"#{number}"} id_prefix="help-button">{number}</.calc_button>
             </:cell>
             <:cell class="py-2">{number}</:cell>
             <:cell class="py-2"><.button variant="outline">{number}</.button></:cell>
@@ -257,7 +302,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
       </.table>
     </.sheet>
 
-    <.sheet id="sheet-log" placement="right">
+    <.sheet id="sheet-key-log" placement="right">
       <.header>Last Operations Log</.header>
       <p class="mb-4">These are the last operations executed, most recent first.</p>
       <div class="w-96 max-w-fit">
@@ -265,7 +310,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
       </div>
     </.sheet>
 
-    <.sheet id="sheet-internal" placement="top" class="min-h-48">
+    <.sheet id="sheet-internals" placement="top" class="min-h-48">
       <.header>Internal State</.header>
       <p>This is the representation of the RPN Calculator's internal state.</p>
       <div class="mt-4 whitespace-pre font-mono leading-10">{render_internals(@rpn_calculator)}</div>
@@ -276,12 +321,13 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   attr :key, :string, required: true
   attr :color, :string, default: "primary", values: ~w(primary danger warning success info)
   attr :width, :string, default: "w-16"
+  attr :id_prefix, :string, default: "button"
   slot :inner_block
 
   defp calc_button(assigns) do
     ~H"""
     <.button
-      id={"button-#{@key}"}
+      id={"#{@id_prefix}-#{@key}"}
       variant="solid"
       color={"#{@color}"}
       class={"active:bg-accent #{@width}"}
@@ -308,11 +354,12 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket = socket
-    |> assign(rpn_calculator: %RPNCalculator{})
-    |> assign(key_log: [])
-    |> assign(basic_style: true)
-    |> assign(error_msg: nil)
+    socket =
+      socket
+      |> assign(rpn_calculator: %RPNCalculator{})
+      |> assign(key_log: [])
+      |> assign(basic_style: true)
+      |> assign(error_msg: nil)
 
     {:ok, socket}
   end
