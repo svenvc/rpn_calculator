@@ -6,6 +6,8 @@ An RPN Calculator written using Elixir Phoenix LiveView and Fluxon UI
 
 You can try the [Live Demo](https://calculator.stfx.eu) yourself.
 
+[![Elixir CI](https://github.com/svenvc/rpn_calculator/actions/workflows/elixir.yml/badge.svg)](https://github.com/svenvc/rpn_calculator/actions/workflows/elixir.yml)
+
 ## Implementation
 
 ### rpn_calculator.ex
