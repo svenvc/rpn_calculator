@@ -140,6 +140,15 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
       </div>
     </Layouts.app>
 
+    <.sheet_help_instructions />
+    <.sheet_keyboard_shortcuts basic_style={@basic_style} />
+    <.sheet_key_log key_log={@key_log} />
+    <.sheet_internals rpn_calculator={@rpn_calculator} />
+    """
+  end
+
+  defp sheet_help_instructions(assigns) do
+    ~H"""
     <.sheet id="sheet-help-instructions" placement="top" class="min-h-48">
       <.header>Help</.header>
       <div class="space-y-4 w-128 max-w-fit">
@@ -165,7 +174,13 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
         </p>
       </div>
     </.sheet>
+    """
+  end
 
+  attr :basic_style, :boolean, required: true
+
+  defp sheet_keyboard_shortcuts(assigns) do
+    ~H"""
     <.sheet id="sheet-keyboard-shortcuts" placement="left">
       <.header>Keyboard Shortcuts</.header>
       <.table>
@@ -301,7 +316,13 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
         </.table_body>
       </.table>
     </.sheet>
+    """
+  end
 
+  attr :key_log, :list, required: true
+
+  defp sheet_key_log(assigns) do
+    ~H"""
     <.sheet id="sheet-key-log" placement="right">
       <.header>Last Operations Log</.header>
       <p class="mb-4">These are the last operations executed, most recent first.</p>
@@ -309,7 +330,13 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
         <.button :for={key <- @key_log} variant="outline" class="m-1">{key}</.button>
       </div>
     </.sheet>
+    """
+  end
 
+  attr :rpn_calculator, :map, required: true
+
+  defp sheet_internals(assigns) do
+    ~H"""
     <.sheet id="sheet-internals" placement="top" class="min-h-48">
       <.header>Internal State</.header>
       <p>This is the representation of the RPN Calculator's internal state.</p>
@@ -352,18 +379,6 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     """
   end
 
-  @impl true
-  def mount(_params, _session, socket) do
-    socket =
-      socket
-      |> assign(rpn_calculator: %RPNCalculator{})
-      |> assign(key_log: [])
-      |> assign(basic_style: true)
-      |> assign(error_msg: nil)
-
-    {:ok, socket}
-  end
-
   defp render_main_display(%RPNCalculator{} = rpn_calculator) do
     case rpn_calculator.input_digits do
       "" -> RPNCalculator.top_of_stack(rpn_calculator) |> RPNCalculator.render_number()
@@ -392,6 +407,18 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
       time: 200,
       to: button_id
     )
+  end
+
+  @impl true
+  def mount(_params, _session, socket) do
+    socket =
+      socket
+      |> assign(rpn_calculator: %RPNCalculator{})
+      |> assign(key_log: [])
+      |> assign(basic_style: true)
+      |> assign(error_msg: nil)
+
+    {:ok, socket}
   end
 
   @key_translations %{
