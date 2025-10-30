@@ -96,46 +96,27 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           id="help-panel"
           class="grid grid-cols-4 grid-rows-1 gap-4 justify-items-center w-72 mt-10"
         >
-          <.tooltip value="How to use this calculator ?" delay={1000}>
-            <.button
-              variant="soft"
-              size="xs"
-              class="w-16"
-              phx-click={Fluxon.open_dialog("sheet-help-instructions")}
-            >
-              Help
-            </.button>
-          </.tooltip>
-          <.tooltip value="What are the keyboard key equivalents ?" delay={1000}>
-            <.button
-              variant="soft"
-              size="xs"
-              class="w-16"
-              phx-click={Fluxon.open_dialog("sheet-keyboard-shortcuts")}
-            >
-              Keyboard
-            </.button>
-          </.tooltip>
-          <.tooltip value="Show a log of all buttons that were pressed" delay={1000}>
-            <.button
-              variant="soft"
-              size="xs"
-              class="w-16"
-              phx-click={Fluxon.open_dialog("sheet-key-log")}
-            >
-              Log
-            </.button>
-          </.tooltip>
-          <.tooltip value="Show the state of the internal model of the calculator" delay={1000}>
-            <.button
-              variant="soft"
-              size="xs"
-              class="w-16"
-              phx-click={Fluxon.open_dialog("sheet-internals")}
-            >
-              Internal
-            </.button>
-          </.tooltip>
+          <.help_button
+            sheet_id="sheet-help-instructions"
+            tooltip="How should I use this calculator ?"
+          >
+            Help
+          </.help_button>
+          <.help_button
+            sheet_id="sheet-keyboard-shortcuts"
+            tooltip="What are the keyboard key equivalents ?"
+          >
+            Keyboard
+          </.help_button>
+          <.help_button sheet_id="sheet-key-log" tooltip="Show a log of all buttons that were pressed">
+            Log
+          </.help_button>
+          <.help_button
+            sheet_id="sheet-internals"
+            tooltip="Show the state of the internal model of the calculator"
+          >
+            Internal
+          </.help_button>
         </div>
       </div>
     </Layouts.app>
@@ -376,6 +357,25 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
                     <> (if @soft, do: " text-foreground-softest", else: "")}"}>
       {render_slot(@inner_block)}
     </div>
+    """
+  end
+
+  attr :sheet_id, :string, required: true
+  attr :tooltip, :string, required: true
+  slot :inner_block, required: true
+
+  defp help_button(assigns) do
+    ~H"""
+    <.tooltip value={@tooltip} delay={1000}>
+      <.button
+        variant="soft"
+        size="xs"
+        class="w-16"
+        phx-click={Fluxon.open_dialog(@sheet_id)}
+      >
+        {render_slot(@inner_block)}
+      </.button>
+    </.tooltip>
     """
   end
 
