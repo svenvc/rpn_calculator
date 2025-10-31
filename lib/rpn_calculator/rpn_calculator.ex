@@ -1,6 +1,17 @@
 defmodule RPNCalculator.RPNCalculator do
   defstruct rpn_stack: [0], input_digits: "", computed?: false
 
+  @moduledoc """
+  RPNCalculator implements the core model of a Reverse Polish Notation calculator.
+
+  RPNCalculator is a struct that holds a stack of numbers (rpn_stack),
+  the input being entered/edited by the user (input_digits)
+  and a flag that indicated if the top of the stack was the result of a computation
+  or if the user is still entering/editing it (computed?).
+
+  The basic operation is proces_key that transitions the model from one state to the next.
+  """
+
   @known_keys ~w(
     0 1 2 3 4 5 6 7 8 9
     Dot Sign
@@ -15,7 +26,13 @@ defmodule RPNCalculator.RPNCalculator do
     Log Ln
     Reciprocal)
 
+  @doc "Return the list of keys that I can process"
+
   def known_keys, do: @known_keys
+
+  @doc "Process key, transitioning rpn_calculator to its next state"
+
+  def process_key(rpn_calculator, key)
 
   @max_input_length 16
 
@@ -286,6 +303,8 @@ defmodule RPNCalculator.RPNCalculator do
     end)
   end
 
+  @doc "Process a list of keys in sequence"
+
   def process_keys(%__MODULE__{} = rpn_calculator, keys) when is_list(keys) do
     Enum.reduce(
       keys,
@@ -294,6 +313,8 @@ defmodule RPNCalculator.RPNCalculator do
     )
   end
 
+  @doc "Return the top of the stack, x, of rpn_calculator"
+
   def top_of_stack(%__MODULE__{} = rpn_calculator) do
     [top_of_stack | _tail] = rpn_calculator.rpn_stack
     top_of_stack
@@ -301,6 +322,8 @@ defmodule RPNCalculator.RPNCalculator do
 
   @max_integer 999_999_999_999_999_999
   @max_output_length 18
+
+  @doc "Render number to a string, for human consumption, limiting its size and precision"
 
   def render_number(number) do
     integer = trunc(number)
