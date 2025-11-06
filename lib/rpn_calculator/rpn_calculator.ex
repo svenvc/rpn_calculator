@@ -48,7 +48,7 @@ defmodule RPNCalculator.RPNCalculator do
       cond do
         input_digits == "0" -> key
         String.length(input_digits) >= @max_input_length -> input_digits
-        String.last(input_digits) == "e" && key == "0" -> input_digits
+        String.last(input_digits) == "e" and key == "0" -> input_digits
         true -> input_digits <> key
       end
     end)
@@ -107,7 +107,7 @@ defmodule RPNCalculator.RPNCalculator do
   def process_key(%__MODULE__{} = rpn_calculator, "EE") do
     rpn_calculator
     |> update_input_digits(fn input_digits ->
-      if input_digits == "" || String.contains?(input_digits, "e") do
+      if input_digits == "" or String.contains?(input_digits, "e") do
         input_digits
       else
         if String.contains?(input_digits, ".") do
@@ -329,7 +329,7 @@ defmodule RPNCalculator.RPNCalculator do
     integer = trunc(number)
 
     cond do
-      number == integer && abs(integer) <= @max_integer ->
+      number == integer and abs(integer) <= @max_integer ->
         to_string(integer)
 
       true ->

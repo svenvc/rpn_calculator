@@ -311,6 +311,9 @@ defmodule RPNCalculator.HP35Test do
     ])
   end
 
+  # Play a sequence of steps, each step is a tuple of a key and a value.
+  # Processing the key should make the top of stack equal to the value
+  # Key can also be a whole number as a string
   defp assert_sequence(steps) do
     Enum.map_reduce(
       steps,

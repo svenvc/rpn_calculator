@@ -1,5 +1,6 @@
 defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   use RPNCalculatorWeb, :live_view
+  require Logger
 
   alias RPNCalculator.RPNCalculator
 
@@ -381,7 +382,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   @impl true
   def handle_event("calc-keyup", %{"key" => key}, socket) do
-    # IO.inspect(key, label: "keyup")
+    Logger.debug("keyup: #{key}")
     translated_key = Map.get(@key_translations, key, key)
 
     if translated_key in RPNCalculator.known_keys() do
@@ -396,22 +397,22 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   @impl true
   def handle_event("calc-button", %{"key" => "Style"}, socket) do
-    # IO.inspect(key, label: "button")
+    Logger.debug("button: Style")
     {:noreply, assign(socket, basic_style: !socket.assigns.basic_style)}
   end
 
   @impl true
   def handle_event("calc-button", %{"key" => key}, socket) do
-    # IO.inspect(key, label: "button")
+    Logger.debug("button: #{key}")
     {:noreply, socket |> process_key(key)}
   end
 
   defp process_key(socket, key) do
-    # IO.inspect(key, label: "processing")
+    Logger.debug("processing: #{key}")
     if key in RPNCalculator.known_keys() do
       try do
         rpn_calculator = socket.assigns.rpn_calculator |> RPNCalculator.process_key(key)
-        # IO.inspect(rpn_calculator, label: "rpn_calculator")
+        Logger.debug("rpn_calculator: #{inspect(rpn_calculator)}")
         socket
         |> assign(rpn_calculator: rpn_calculator)
         |> assign(key_log: [key | socket.assigns.key_log])
