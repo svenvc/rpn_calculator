@@ -6,8 +6,9 @@ defmodule RPNCalculator.RPNCalculator do
 
   RPNCalculator is a struct that holds a stack of numbers (rpn_stack),
   the input being entered/edited by the user (input_digits)
-  and a flag that indicated if the top of the stack was the result of a computation
+  and a flag that indicates if the top of the stack was the result of a computation
   or if the user is still entering/editing it (computed?).
+  The top of the stack, x, equals the interpretation of the input_digits.
 
   The basic operation is proces_key that transitions the model from one state to the next.
   """
@@ -313,7 +314,7 @@ defmodule RPNCalculator.RPNCalculator do
     )
   end
 
-  @doc "Return the top of the stack, x, of rpn_calculator"
+  @doc "Return the top of the stack, x, of rpn_calculator, the display value"
 
   def top_of_stack(%__MODULE__{} = rpn_calculator) do
     [top_of_stack | _tail] = rpn_calculator.rpn_stack
