@@ -54,7 +54,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
             </.calc_button>
           </div>
           <div
-            :if={!@basic_style}
+            :if={!@basic_style?}
             class="grid grid-cols-4 grid-rows-3 gap-2 justify-items-center w-72 font-bold mb-2"
           >
             <.calc_button key="Sin" color="warning">SIN</.calc_button>
@@ -123,7 +123,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     </Layouts.app>
 
     <.sheet_help_instructions />
-    <.sheet_keyboard_shortcuts basic_style={@basic_style} />
+    <.sheet_keyboard_shortcuts basic_style?={@basic_style?} />
     <.sheet_key_log key_log={@key_log} />
     <.sheet_internals rpn_calculator={@rpn_calculator} />
     """
@@ -159,7 +159,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
     """
   end
 
-  attr :basic_style, :boolean, required: true
+  attr :basic_style?, :boolean, required: true
 
   defp sheet_keyboard_shortcuts(assigns) do
     ~H"""
@@ -211,7 +211,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           <.help_row key="Dot" keyboard=".">
             &period;
           </.help_row>
-          <.help_row :if={!@basic_style} key="EE" keyboard="e">
+          <.help_row :if={!@basic_style?} key="EE" keyboard="e">
             EE
           </.help_row>
           <.help_row :for={number <- 0..9} key={number}>
@@ -341,7 +341,8 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   defp render_internals(rpn_calculator) do
     inspect(
       rpn_calculator |> Map.take([:rpn_stack, :input_digits, :computed?]),
-      pretty: true
+      pretty: true,
+      charlists: :as_lists
     )
   end
 
@@ -359,7 +360,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
       socket
       |> assign(rpn_calculator: %RPNCalculator{})
       |> assign(key_log: [])
-      |> assign(basic_style: true)
+      |> assign(basic_style?: true)
       |> assign(error_msg: nil)
 
     {:ok, socket}
@@ -398,7 +399,7 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
   @impl true
   def handle_event("calc-button", %{"key" => "Style"}, socket) do
     Logger.debug("button: Style")
-    {:noreply, assign(socket, basic_style: !socket.assigns.basic_style)}
+    {:noreply, assign(socket, basic_style?: !socket.assigns.basic_style?)}
   end
 
   @impl true
@@ -409,10 +410,12 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   defp process_key(socket, key) do
     Logger.debug("processing: #{key}")
+
     if key in RPNCalculator.known_keys() do
       try do
         rpn_calculator = socket.assigns.rpn_calculator |> RPNCalculator.process_key(key)
         Logger.debug("rpn_calculator: #{inspect(rpn_calculator)}")
+
         socket
         |> assign(rpn_calculator: rpn_calculator)
         |> assign(key_log: [key | socket.assigns.key_log])
