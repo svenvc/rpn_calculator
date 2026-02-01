@@ -131,9 +131,9 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
 
   defp sheet_help_instructions(assigns) do
     ~H"""
-    <.sheet id="sheet-help-instructions" placement="top" class="min-h-48">
+    <.sheet id="sheet-help-instructions" placement="top">
       <.header>Help</.header>
-      <div class="space-y-4 w-128 max-w-fit">
+      <div class="space-y-4 lg:w-128">
         <p>
           This calculator uses Reverse Polish Notation (RPN).
           That means that you first push numbers on a stack and then you select the operation to perform.
@@ -153,6 +153,11 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           Additionally, there are a number of stack manipulation operations, such as
           switching x and y, dropping x and rolling the stack downwards or upwards.
           The display shows the top 4 stack positions.
+        </p>
+        <p>
+          This is an open-source project. See the GitHub repository
+          <a href="https://github.com/svenvc/rpn_calculator" class="underline">https://github.com/svenvc/rpn_calculator</a>
+          for more information.
         </p>
       </div>
     </.sheet>
