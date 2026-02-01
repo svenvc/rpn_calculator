@@ -34,9 +34,10 @@ Input editing is ended by operations or manipulations.
 
 Backspace removes the last input digit.
 Clear removes all input digits,
-and when there are no input digits, removes the whole stack.
+and when there are no input digits, clears the whole stack.
 
-Division by zero is not allowed.
+Computational errors are caught and shown to the user.
+There is some code to augment number formatting and parsing.
 
 ### calculator.ex
 
@@ -44,5 +45,5 @@ The UI is defined in [rpn_calculator.ex](lib/rpn_calculator_web/live/calculator_
 This is a Phoenix LiveView that renders based on the state of its model.
 Keys, both buttons and keyboard keys, are sent to the model.
 
-The panel at the bottom show help, a keyboard shortcut table,
+The panel at the bottom shows help, a keyboard shortcut table,
 a log of all keys entered and a look at the internal model.
