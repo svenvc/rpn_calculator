@@ -142,10 +142,10 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
           For example, to compute <b>(100 + 200) / 3</b>, you would type <b>100</b>, <b>Enter</b>
           (to push the current number up the stack), <b>200</b>
           (the stack now contains 100 and 200), <b>+</b>
-          (to add the top two stack entries, often called x and y, together,
-          remove them and leave the result on the top of the stack), <b>3</b>
+          (to add the top two stack entries, often called x, 200, and y, 100, together,
+          remove them and leave the result on the top of the stack, as x), <b>3</b>
           and finally <b>/</b>
-          (to divide x by y).
+          (to divide y, 300 by x, 3).
           Note how you no longer need parenthesis, nor an equal sign.
           Even a memory register is not really necessary.
         </p>
