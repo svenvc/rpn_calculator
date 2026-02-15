@@ -156,7 +156,9 @@ defmodule RPNCalculatorWeb.CalculatorLive.Calculator do
         </p>
         <p>
           This is an open-source project. See the GitHub repository
-          <a href="https://github.com/svenvc/rpn_calculator" class="underline">https://github.com/svenvc/rpn_calculator</a>
+          <a href="https://github.com/svenvc/rpn_calculator" class="underline">
+            https://github.com/svenvc/rpn_calculator
+          </a>
           for more information.
         </p>
       </div>
