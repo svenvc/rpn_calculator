@@ -31,17 +31,21 @@ defmodule RPNCalculator.RPNCalculator do
 
   def known_keys, do: @known_keys
 
-  @doc "Process key, transitioning rpn_calculator to its next state"
-
-  def process_key(rpn_calculator, key)
+  # keys relating to entering/editing input numbers
 
   @max_input_length 16
+
+  @doc "Process key, transitioning rpn_calculator to its next state"
 
   def process_key(%__MODULE__{} = rpn_calculator, key)
       when key in ~w(0 1 2 3 4 5 6 7 8 9) do
     if rpn_calculator.input_digits == "" and rpn_calculator.computed? do
+      # stack lift or auto enter when entering a new number after a computation
       rpn_calculator
-      |> update_rpn_stack(fn [top | tail] -> [0 | [top | tail]] end, clear_input: false)
+      |> update_rpn_stack(
+        fn [top | tail] -> [0 | [top | tail]] end,
+        clear_input: false
+      )
     else
       rpn_calculator
     end
@@ -97,7 +101,10 @@ defmodule RPNCalculator.RPNCalculator do
 
     if rpn_calculator.input_digits == "" do
       rpn_calculator
-      |> update_rpn_stack(fn [x | tail] -> [-x | tail] end, clear_input: false)
+      |> update_rpn_stack(
+        fn [x | tail] -> [-x | tail] end,
+        clear_input: false
+      )
       |> update_computed?(true)
     else
       rpn_calculator
@@ -149,6 +156,8 @@ defmodule RPNCalculator.RPNCalculator do
     end)
     |> update_x()
   end
+
+  # Fundamental RPN functions, mathematical operations and stack manipulation
 
   def process_key(%__MODULE__{} = rpn_calculator, "Enter") do
     rpn_calculator
@@ -304,6 +313,8 @@ defmodule RPNCalculator.RPNCalculator do
     end)
   end
 
+  # support for testing
+
   @doc "Process a list of keys in sequence"
 
   def process_keys(%__MODULE__{} = rpn_calculator, keys) when is_list(keys) do
@@ -313,6 +324,8 @@ defmodule RPNCalculator.RPNCalculator do
       fn key, rpn_calculator -> process_key(rpn_calculator, key) end
     )
   end
+
+  # support for interfaces
 
   @doc "Return the top of the stack, x, of rpn_calculator, the display value"
 
@@ -344,7 +357,11 @@ defmodule RPNCalculator.RPNCalculator do
     end
   end
 
-  defp update_rpn_stack(%__MODULE__{} = rpn_calculator, fun, opts \\ [clear_input: true]) do
+  # internal functions, declared public for documentation purposes
+
+  @doc "Apply fun to update the rpn_stack in rpn_calculator and clear the input unless disabled"
+
+  def update_rpn_stack(%__MODULE__{} = rpn_calculator, fun, opts \\ [clear_input: true]) do
     if Keyword.get(opts, :clear_input) do
       Map.update!(rpn_calculator, :rpn_stack, fun)
       |> clear_input()
@@ -353,15 +370,21 @@ defmodule RPNCalculator.RPNCalculator do
     end
   end
 
-  defp update_input_digits(%__MODULE__{} = rpn_calculator, fun) do
+  @doc "Apply fun to update input_digits in rpn_calculator"
+
+  def update_input_digits(%__MODULE__{} = rpn_calculator, fun) do
     Map.update!(rpn_calculator, :input_digits, fun)
   end
 
-  defp update_computed?(%__MODULE__{} = rpn_calculator, boolean) do
+  @doc "Set computed? to boolean in rpn_calculator"
+
+  def update_computed?(%__MODULE__{} = rpn_calculator, boolean) do
     Map.replace!(rpn_calculator, :computed?, boolean)
   end
 
-  defp update_x(%__MODULE__{} = rpn_calculator) do
+  @doc "Update the top of the stack, x, by parsing the input_digits, not clearing the input and setting computed? to false"
+
+  def update_x(%__MODULE__{} = rpn_calculator) do
     new_x = parse_input(rpn_calculator.input_digits)
 
     rpn_calculator
@@ -372,15 +395,20 @@ defmodule RPNCalculator.RPNCalculator do
     |> update_computed?(false)
   end
 
-  defp clear_input(%__MODULE__{} = rpn_calculator) do
+  @doc "Clear the input_digits and set computed? to true"
+
+  def clear_input(%__MODULE__{} = rpn_calculator) do
     rpn_calculator
     |> update_input_digits(fn _ -> "" end)
     |> update_computed?(true)
   end
 
-  defp parse_input(""), do: 0
+  @doc "Convert a string with input into a number, float or integer"
 
-  defp parse_input(input_digits) do
+  def parse_input(""), do: 0
+
+  def parse_input(input_digits) do
+    # Use the correct parser for an integer or float, giving it the correct input
     if String.contains?(input_digits, "e") do
       if String.last(input_digits) == "e" do
         String.to_float(String.slice(input_digits, 0..-2//1))
