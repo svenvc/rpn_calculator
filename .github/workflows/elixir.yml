@@ -18,8 +18,8 @@ jobs:
     - name: Set up Elixir
       uses: erlef/setup-beam@v1
       with:
-        elixir-version: '1.19'
-        otp-version: '28'
+        elixir-version: '1.19.5'
+        otp-version: '28.1.1'
     - name: Add flxuxon hex repo
       env:
         FINGERPRINT: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
